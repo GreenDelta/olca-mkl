@@ -3,7 +3,7 @@ name = "olcamkl"
 version = "0.0.1"
 authors = ["msrocka"]
 edition = "2021"
-# build = "build.rs"
+build = "build.rs"
 
 [dependencies]
 jni-sys = "0.3.0"
