@@ -18,13 +18,10 @@ public final class MKL {
 			return true;
 		if (folder == null)
 			return false;
-		var lib = new File(folder, "olcamkl.dll");
-		if (!lib.exists())
-			return false;
 		synchronized (_loaded) {
 			if (_loaded.get())
 				return true;
-			System.load(lib.getAbsolutePath());
+			loadLibraries(folder);
 			try {
 				int v = MKL.version();
 				if (v > 0) {
@@ -38,4 +35,17 @@ public final class MKL {
 		}
 	}
 
+	private static boolean loadLibraries(File folder) {
+		var libs = new String[] {
+			"mkl_rt.2.dll",
+			"olcamkl.dll",
+		};
+		for (var lib : libs) {
+			var file = new File(folder, lib);
+			if (!file.exists())
+				return false;
+			System.load(file.getAbsolutePath());
+		}
+		return true;
+	}
 }
