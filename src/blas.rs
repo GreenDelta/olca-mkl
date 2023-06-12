@@ -7,12 +7,13 @@ use libc::c_char;
 #[cfg_attr(target_os = "linux", link(name = "openblas64_"))]
 #[cfg_attr(target_os = "macos", link(name = "openblas64_"))]
 extern "C" {
+
     /// [DGEMV](http://www.netlib.org/lapack/explore-html/dc/da8/dgemv_8f.html)
     ///  performs one of the matrix-vector operations
     /// `y := alpha*A*x + beta*y`   or   `y := alpha*A**T*x + beta*y`
     /// where `alpha` and `beta` are scalars, `x` and `y` are vectors and `A`
     /// is an `m` by `n` matrix.
-    #[cfg_attr(target_os = "windows", link_name = "dgemv64_")]
+    #[cfg_attr(target_os = "windows", link_name = "DGEMV_64")]
     #[cfg_attr(target_os = "linux", link_name = "dgemv_64_")]
     #[cfg_attr(target_os = "macos", link_name = "dgemv_64_")]
     pub fn dgemv(
