@@ -4,8 +4,8 @@ use libc::c_char;
 
 #[allow(non_snake_case)]
 #[cfg_attr(target_os = "windows", link(name = "mkl_rt.2"))]
-#[cfg_attr(target_os = "linux", link(name = "openblas64_"))]
-#[cfg_attr(target_os = "macos", link(name = "openblas64_"))]
+#[cfg_attr(target_os = "linux", link(name = "mkl_rt"))]
+#[cfg_attr(target_os = "macos", link(name = "mkl_rt"))]
 extern "C" {
 
     /// [DGEMV](http://www.netlib.org/lapack/explore-html/dc/da8/dgemv_8f.html)
@@ -14,8 +14,8 @@ extern "C" {
     /// where `alpha` and `beta` are scalars, `x` and `y` are vectors and `A`
     /// is an `m` by `n` matrix.
     #[cfg_attr(target_os = "windows", link_name = "DGEMV_64")]
-    #[cfg_attr(target_os = "linux", link_name = "dgemv_64_")]
-    #[cfg_attr(target_os = "macos", link_name = "dgemv_64_")]
+    #[cfg_attr(target_os = "linux", link_name = "DGEMV_64")]
+    #[cfg_attr(target_os = "macos", link_name = "DGEMV_64")]
     pub fn dgemv(
         TRANS: *const c_char,
         M: *const i64,

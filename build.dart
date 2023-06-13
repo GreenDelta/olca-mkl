@@ -7,8 +7,11 @@ main() {
   }
 
   print("compile library ...");
+  var flags = Platform.isWindows
+      ? "-C target-feature=+crt-static"
+      : "-C target-feature=-crt-static";
   var r = Process.runSync("cargo", ["build", "--release"],
-      environment: {"RUSTFLAGS": "-C target-feature=+crt-static"});
+      environment: {"RUSTFLAGS": flags});
 
   if (r.exitCode != 0) {
     if (r.stderr != null) {
@@ -22,11 +25,19 @@ main() {
     print(r.stdout.toString());
   }
 
-  var build = File("target/release/olcamkl.dll");
+  var lib = _target();
+  var build = File("target/release/$lib");
   if (!build.existsSync()) {
     print("ERROR: build failed; ${build.path} does not exist");
     return;
   }
-  build.copySync("bin/olcamkl.dll");
+  build.copySync("bin/$lib");
   build.deleteSync();
+}
+
+String _target() {
+  if (Platform.isWindows) {
+    return "olcamkl.dll";
+  }
+  return Platform.isMacOS ? "libolcamkl.dylib" : "libolcamkl.so";
 }
