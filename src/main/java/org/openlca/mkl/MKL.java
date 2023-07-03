@@ -13,6 +13,10 @@ public final class MKL {
 		int rows, int columns, double[] matrix, double[] vector, double[] result
 	);
 
+	public static native void sparseSolve(
+		int n, double[] a, int[] ia, int[] ja, double[] b, double[] x
+	);
+
 	public static boolean loadFrom(File folder) {
 		if (_loaded.get())
 			return true;

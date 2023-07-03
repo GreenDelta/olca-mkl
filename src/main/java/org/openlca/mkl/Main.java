@@ -20,5 +20,15 @@ public class Main {
 		for (double yi : y) {
 			System.out.println(yi);
 		}
+
+		double[] x = new double[8];
+		MKL.sparseSolve(
+			8,
+			new double[]{1.0, -1.0, -3.0, -2.0, 5.0, 4.0, 6.0, 4.0, -4.0, 2.0, 7.0, 8.0, -5.0},
+			new int[]{1, 4, 6, 9, 12, 14},
+			new int[]{1, 2, 4, 1, 2, 3, 4, 5, 1, 3, 4, 2, 5},
+			new double[]{1, 1, 1, 1, 1, 1, 1, 1},
+			x
+		);
 	}
 }

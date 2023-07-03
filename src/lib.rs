@@ -1,8 +1,8 @@
-use jni_sys::{jclass, jdoubleArray, jint, JNIEnv};
-use libc::c_char;
+use jni_sys::{jclass, jdoubleArray, jint, jintArray, JNIEnv};
+use std::ffi::c_char;
 use std::ptr;
 
-mod blas;
+mod mkl;
 
 const NULL: *mut u8 = ptr::null_mut();
 
@@ -24,6 +24,16 @@ unsafe fn release_array_f64(
   ptr: *mut f64,
 ) {
   (**env).ReleaseDoubleArrayElements.unwrap()(env, array, ptr, 0);
+}
+
+/// Get the raw pointer of the given array from the JVM.
+unsafe fn get_array_i32(env: *mut JNIEnv, array: jintArray) -> *mut i32 {
+  return (**env).GetIntArrayElements.unwrap()(env, array, NULL);
+}
+
+/// Give the data behind the raw pointer of the given array back to the JVM.
+unsafe fn release_array_i32(env: *mut JNIEnv, array: jintArray, ptr: *mut i32) {
+  (**env).ReleaseIntArrayElements.unwrap()(env, array, ptr, 0);
 }
 
 #[no_mangle]
@@ -49,7 +59,7 @@ pub extern "system" fn Java_org_openlca_mkl_MKL_denseMatrixVectorMultiplication(
     let rowsA_64: i64 = rows as i64;
     let colsA_64: i64 = columns as i64;
 
-    blas::dgemv(
+    mkl::dgemv(
       &trans, &rowsA_64, &colsA_64, &alpha, aPtr, &rowsA_64, xPtr, &inc, &beta,
       yPtr, &inc,
     );
@@ -57,5 +67,42 @@ pub extern "system" fn Java_org_openlca_mkl_MKL_denseMatrixVectorMultiplication(
     release_array_f64(env, matrix, aPtr);
     release_array_f64(env, vector, xPtr);
     release_array_f64(env, result, yPtr);
+  }
+}
+
+#[no_mangle]
+#[allow(non_snake_case)]
+pub extern "system" fn Java_org_openlca_mkl_MKL_sparseSolve(
+  env: *mut JNIEnv,
+  _class: jclass,
+  n: jint,
+  a: jdoubleArray,
+  ia: jintArray,
+  ja: jintArray,
+  b: jdoubleArray,
+  x: jdoubleArray,
+) {
+  unsafe {
+    let a_ptr = get_array_f64(env, a);
+    let ia_ptr = get_array_i32(env, ia);
+    let ja_ptr = get_array_i32(env, ja);
+    let b_ptr = get_array_f64(env, b);
+    let x_ptr = get_array_f64(env, x);
+
+    let pt = ptr::null_mut();
+    let perm = ptr::null_mut();
+    let iparm = ptr::null_mut();
+    let error = ptr::null_mut();
+
+    mkl::pardiso(
+      pt, &1, &1, &11, &13, &n, a_ptr, ia_ptr, ja_ptr, perm, &1, iparm, &1,
+      b_ptr, x_ptr, error,
+    );
+
+    release_array_f64(env, a, a_ptr);
+    release_array_i32(env, ia, ia_ptr);
+    release_array_i32(env, ja, ja_ptr);
+    release_array_f64(env, b, b_ptr);
+    release_array_f64(env, x, x_ptr);
   }
 }
