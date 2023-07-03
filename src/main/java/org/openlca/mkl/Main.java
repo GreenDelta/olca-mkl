@@ -26,13 +26,6 @@ public class Main {
 		int[] ia = new int[]{1, 4, 6, 9, 12, 14};
 		int[] ja = new int[]{1, 2, 4, 1, 2, 3, 4, 5, 1, 3, 4, 2, 5};
 
-		for (int i = 0; i < ia.length; i++) {
-			ia[i] -= 1;
-		}
-		for (int i = 0; i < ja.length; i++) {
-			ja[i] -= 1;
-		}
-
 		MKL.sparseSolve(
 			5,
 			a,
