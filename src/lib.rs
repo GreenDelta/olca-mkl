@@ -1,5 +1,5 @@
 use jni_sys::{jclass, jdoubleArray, jint, jintArray, JNIEnv};
-use std::ffi::c_char;
+use std::ffi::{c_char, c_void};
 use std::ptr;
 
 mod mkl;
@@ -83,26 +83,44 @@ pub extern "system" fn Java_org_openlca_mkl_MKL_sparseSolve(
   x: jdoubleArray,
 ) {
   unsafe {
+    println!("enter func");
     let a_ptr = get_array_f64(env, a);
     let ia_ptr = get_array_i32(env, ia);
     let ja_ptr = get_array_i32(env, ja);
     let b_ptr = get_array_f64(env, b);
     let x_ptr = get_array_f64(env, x);
 
-    let pt = ptr::null_mut();
-    let perm = ptr::null_mut();
-    let iparm = ptr::null_mut();
-    let error = ptr::null_mut();
+    let mut pt = vec![0i64; 64];
+    let pt_ptr = pt.as_mut_ptr() as *mut c_void;
 
+    let mut perm = vec![0; n as usize];
+    let perm_ptr = perm.as_mut_ptr();
+
+    let mut iparm = vec![0; 64];
+    let iparm_ptr = iparm.as_mut_ptr();
+
+    let mut error = vec![0; 1];
+    let error_ptr = error.as_mut_ptr();
+
+    let maxfct = 1;
+    let mnum = 1;
+    let mtype = 11;
+    let phase = 13;
+    let nrhs = 1;
+    let msglvl = 1;
+
+    println!("before call");
     mkl::pardiso(
-      pt, &1, &1, &11, &13, &n, a_ptr, ia_ptr, ja_ptr, perm, &1, iparm, &1,
-      b_ptr, x_ptr, error,
+      pt_ptr, &maxfct, &mnum, &mtype, &phase, &n, a_ptr, ia_ptr, ja_ptr,
+      perm_ptr, &nrhs, iparm_ptr, &msglvl, b_ptr, x_ptr, error_ptr,
     );
+    println!("after call");
 
     release_array_f64(env, a, a_ptr);
     release_array_i32(env, ia, ia_ptr);
     release_array_i32(env, ja, ja_ptr);
     release_array_f64(env, b, b_ptr);
     release_array_f64(env, x, x_ptr);
+    println!("exit func");
   }
 }
