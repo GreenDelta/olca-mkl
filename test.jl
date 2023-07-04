@@ -1,10 +1,10 @@
-const MklInt = Int64
+const MklInt = Int32
 
 pt = zeros(Int64, 64)
 maxfct = Ref{MklInt}(1)
 mnum = Ref{MklInt}(1)
 mtype = Ref{MklInt}(11)
-phase = Ref{MklInt}(11)
+phase = Ref{MklInt}(13)
 
 n = Ref{MklInt}(2)
 a = Vector{Float64}([1.0, -0.5, -1.0, 1.0])
@@ -14,7 +14,7 @@ ja = Vector{MklInt}([1, 2, 1, 2])
 perm = zeros(MklInt, 2)
 nrhs = Ref{MklInt}(1)
 iparm = zeros(MklInt, 64)
-msglvl = Ref{MklInt}(1)
+msglvl = Ref{MklInt}(0)
 
 b = Vector{Float64}([1.0, 0.0])
 x = zeros(Float64, 2)
@@ -34,14 +34,14 @@ error = Ref{MklInt}(0)
   mtype::Ptr{MklInt},
   phase::Ptr{MklInt},
   n::Ptr{MklInt},
-  a::Ptr{Float64},
+  a::Ptr{Cvoid},
   ia::Ptr{MklInt},
   ja::Ptr{MklInt},
   perm::Ptr{MklInt},
   nrhs::Ptr{MklInt},
   iparm::Ptr{MklInt},
   msglvl::Ptr{MklInt},
-  b::Ptr{Float64},
-  x::Ptr{Float64},
+  b::Ptr{Cvoid},
+  x::Ptr{Cvoid},
   error::Ptr{MklInt}
 )::Cvoid
