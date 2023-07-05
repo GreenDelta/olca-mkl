@@ -1,4 +1,5 @@
 import "dart:io";
+import "package:archive/archive_io.dart";
 
 enum _Lib {
   MKL(
@@ -59,19 +60,39 @@ enum _Lib {
   }
 }
 
-main() {
+main() async {
   // first we need to fetch the following libraries from pypi.org:
   // * mkl 2023.1.0
   // * intel-openmp 2023.1.0
   // * tbb 2021.9.0
 
-  for (var lib in _Lib.values) {
-    print(lib.url());
-  }
-
   var targetDir = _ensureDir("./target");
 
-  print(_Lib.MKL.url());
+  for (var lib in _Lib.values) {
+    var wheel = await _fetchLibrary(targetDir, lib);
+    var bytes = wheel.readAsBytesSync();
+    var zip = ZipDecoder().decodeBytes(bytes);
+
+    for (var dll in zip) {
+      if (!dll.name.contains("/data/Library/bin/")) {
+        continue;
+      }
+      print(dll);
+    }
+  }
+}
+
+Future<File> _fetchLibrary(Directory dir, _Lib lib) async {
+  var file = File(dir.path + "/" + lib.file());
+  if (file.existsSync()) {
+    return file;
+  }
+  print("download library ${lib.name} ...");
+  var url = Uri.parse(lib.url());
+  var req = await HttpClient().getUrl(url);
+  var resp = await req.close();
+  resp.pipe(file.openWrite());
+  return file;
 }
 
 Directory _ensureDir(String path) {
