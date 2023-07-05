@@ -3,6 +3,9 @@ use std::ffi::{c_char, c_void};
 use std::ptr;
 
 mod mkl;
+mod sparse;
+
+pub use crate::sparse::*;
 
 const NULL: *mut u8 = ptr::null_mut();
 
