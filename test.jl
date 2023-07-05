@@ -45,3 +45,5 @@ error = Ref{MklInt}(0)
   x::Ptr{Cvoid},
   error::Ptr{MklInt}
 )::Cvoid
+
+display(x)

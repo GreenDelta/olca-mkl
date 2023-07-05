@@ -1,8 +1,8 @@
 import ctypes
 import numpy as np
 
-# lib = ctypes.CDLL("./bin/mkl_rt.2.dll")
-lib = ctypes.CDLL("./bin/libmkl_rt.so.2")
+lib = ctypes.CDLL("./bin/mkl_rt.2.dll")
+# lib = ctypes.CDLL("./bin/libmkl_rt.so.2")
 pardiso = lib.pardiso
 pardiso.argtypes = [
     ctypes.POINTER(ctypes.c_int64),  # pt
