@@ -60,26 +60,50 @@ enum _Lib {
   }
 }
 
-main() async {
-  // first we need to fetch the following libraries from pypi.org:
-  // * mkl 2023.1.0
-  // * intel-openmp 2023.1.0
-  // * tbb 2021.9.0
+fetch() async {
+  var binDir = Directory("./bin");
+  if (await binDir.exists()) {
+    return;
+  }
 
-  var targetDir = _ensureDir("./target");
+  print("prepare native libraries in folder ./bin");
+  await binDir.create();
+
+  var workDir = _ensureDir("./target/work");
 
   for (var lib in _Lib.values) {
-    var wheel = await _fetchLibrary(targetDir, lib);
+    var wheel = await _fetchLibrary(workDir, lib);
+    print("extract library ${lib.name}");
     var bytes = wheel.readAsBytesSync();
     var zip = ZipDecoder().decodeBytes(bytes);
 
-    for (var dll in zip) {
-      if (!dll.name.contains("/data/Library/bin/")) {
+    for (var e in zip) {
+      if (e.name.contains("/data/Library/bin/")) {
+        var name = e.name.split("/").last;
+        // print("copy dll: ${name}");
+        File(binDir.path + "/" + name)
+          ..createSync()
+          ..writeAsBytesSync(e.content);
         continue;
       }
-      print(dll);
+
+      if (e.name.endsWith("LICENSE.txt") ||
+          e.name.contains("third-party-programs.txt")) {
+        var name = lib.name + "_" + e.name.split("/").last;
+        var licenseFile = File(workDir.path + "/" + name);
+        print("consinder the license(s) in ${licenseFile.path}");
+        if (!licenseFile.existsSync()) {
+          licenseFile
+            ..createSync()
+            ..writeAsBytesSync(e.content);
+        }
+      }
     }
   }
+}
+
+main() async {
+  fetch();
 }
 
 Future<File> _fetchLibrary(Directory dir, _Lib lib) async {

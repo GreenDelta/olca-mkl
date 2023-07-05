@@ -1,7 +1,10 @@
 import "dart:io";
 import "./build/winlib.dart" as winlib;
+import "./build/deps.dart" as deps;
 
-main() {
+main() async {
+  await deps.fetch();
+
   if (Platform.isWindows) {
     winlib.generateLibFile();
   }
