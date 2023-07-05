@@ -1,5 +1,7 @@
 package org.openlca.mkl;
 
+import org.openlca.core.matrix.format.HashPointMatrix;
+
 import java.io.File;
 
 public class Main {
@@ -21,18 +23,23 @@ public class Main {
 			System.out.println(yi);
 		}
 
-		double[] x = new double[8];
-		double[] a = new double[]{1.0, -1.0, -3.0, -2.0, 5.0, 4.0, 6.0, 4.0, -4.0, 2.0, 7.0, 8.0, -5.0};
-		int[] ia = new int[]{1, 4, 6, 9, 12, 14};
-		int[] ja = new int[]{1, 2, 4, 1, 2, 3, 4, 5, 1, 3, 4, 2, 5};
+		double[] x = new double[2];
+		var m = HashPointMatrix.of(new double[][]{
+			{1.0, -0.5},
+			{-1.0, 1.0}});
+		var csc = m.compress();
 
 		MKL.sparseSolve(
-			5,
-			a,
-			ia,
-			ja,
-			new double[]{1, 1, 1, 1, 1},
+			2,
+			csc.values,
+			csc.columnPointers,
+			csc.rowIndices,
+			new double[]{1, 0},
 			x
 		);
+
+		for (var xi : x) {
+			System.out.println(xi);
+		}
 	}
 }

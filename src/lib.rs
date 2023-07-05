@@ -81,7 +81,7 @@ pub extern "system" fn Java_org_openlca_mkl_MKL_sparseSolve(
   ja: jintArray,
   b: jdoubleArray,
   x: jdoubleArray,
-) {
+) -> jint {
   unsafe {
     println!("enter func");
     let a_ptr = get_array_f64(env, a);
@@ -93,13 +93,16 @@ pub extern "system" fn Java_org_openlca_mkl_MKL_sparseSolve(
     let mut pt = vec![0i64; 64];
     let pt_ptr = pt.as_mut_ptr() as *mut c_void;
 
-    let mut perm = vec![0; n as usize];
+    let mut perm = vec![0i32; n as usize];
     let perm_ptr = perm.as_mut_ptr();
 
-    let mut iparm = vec![0; 64];
+    let mut iparm = vec![0i32; 64];
+    iparm[0] = 1; // no defaults
+    iparm[11] = 2; // CSC format
+    iparm[34] = 1; // zero-based indexing
     let iparm_ptr = iparm.as_mut_ptr();
 
-    let mut error = vec![0; 1];
+    let mut error = vec![0i32; 1];
     let error_ptr = error.as_mut_ptr();
 
     let maxfct = 1;
@@ -107,7 +110,7 @@ pub extern "system" fn Java_org_openlca_mkl_MKL_sparseSolve(
     let mtype = 11;
     let phase = 13;
     let nrhs = 1;
-    let msglvl = 1;
+    let msglvl = 0;
 
     println!("before call");
     mkl::pardiso(
@@ -122,5 +125,7 @@ pub extern "system" fn Java_org_openlca_mkl_MKL_sparseSolve(
     release_array_f64(env, b, b_ptr);
     release_array_f64(env, x, x_ptr);
     println!("exit func");
+
+    error[0] as jint
   }
 }

@@ -13,7 +13,7 @@ public final class MKL {
 		int rows, int columns, double[] matrix, double[] vector, double[] result
 	);
 
-	public static native void sparseSolve(
+	public static native int sparseSolve(
 		int n, double[] a, int[] ia, int[] ja, double[] b, double[] x
 	);
 
