@@ -1,7 +1,8 @@
 import ctypes
 import numpy as np
 
-lib = ctypes.CDLL("./bin/mkl_rt.2.dll")
+# lib = ctypes.CDLL("./bin/mkl_rt.2.dll")
+lib = ctypes.CDLL("./bin/libmkl_rt.so.2")
 pardiso = lib.pardiso
 pardiso.argtypes = [
     ctypes.POINTER(ctypes.c_int64),  # pt
@@ -29,19 +30,19 @@ pt = np.zeros(64, dtype=np.int64)
 iparm = np.zeros(64, dtype=np.int32)
 perm = np.zeros(0, dtype=np.int32)
 
-# n = 2
-# a = np.array([1.0, -0.5, -1.0, 1.0], dtype=np.float64)
-# ia = np.array([1, 3, 5], dtype=np.int32)
-# ja = np.array([1, 2, 1, 2], dtype=np.int32)
-# b = np.array([1.0, 0.0], dtype=np.float64)
-# x = np.array([0.0, 0.0], dtype=np.float64)
+n = 2
+a = np.array([1.0, -0.5, -1.0, 1.0], dtype=np.float64)
+ia = np.array([1, 3, 5], dtype=np.int32)
+ja = np.array([1, 2, 1, 2], dtype=np.int32)
+b = np.array([1.0, 0.0], dtype=np.float64)
+x = np.array([0.0, 0.0], dtype=np.float64)
 
-n = 1
-a = np.array([1.0], dtype=np.float64)
-ia = np.array([1, 2], dtype=np.int32)
-ja = np.array([1], dtype=np.int32)
-b = np.array([1.0], dtype=np.float64)
-x = np.array([0.0], dtype=np.float64)
+# n = 1
+# a = np.array([1.0], dtype=np.float64)
+# ia = np.array([1, 2], dtype=np.int32)
+# ja = np.array([1], dtype=np.int32)
+# b = np.array([1.0], dtype=np.float64)
+# x = np.array([0.0], dtype=np.float64)
 
 c_int32_p = ctypes.POINTER(ctypes.c_int32)
 c_float64_p = ctypes.POINTER(ctypes.c_void_p)
@@ -68,3 +69,5 @@ pardiso(
     x.ctypes.data_as(c_float64_p),  # x -> output
     ctypes.byref(ctypes.c_int32(error)),  # pardiso error
 )
+
+print(x)
