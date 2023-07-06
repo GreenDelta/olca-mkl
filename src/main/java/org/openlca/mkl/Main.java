@@ -29,11 +29,11 @@ public class Main {
 			{-1.0, 1.0}});
 		var csc = m.compress();
 
-		MKL.sparseSolve(
+		MKL.solveSparse(
 			2,
 			csc.values,
-			csc.columnPointers,
 			csc.rowIndices,
+			csc.columnPointers,
 			new double[]{1, 0},
 			x
 		);
