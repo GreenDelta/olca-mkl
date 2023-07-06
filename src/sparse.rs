@@ -31,7 +31,11 @@ pub extern "system" fn solve_sparse(
 
     let mut iparm = vec![0i32; 64];
     iparm[0] = 1; // no defaults
+    iparm[1] = 2;
+    iparm[9] = 13;
+    iparm[10] = 1;
     iparm[11] = 2; // CSC format
+    iparm[12] = 1;
     iparm[34] = 1; // zero-based indexing
     let iparm_ptr = iparm.as_mut_ptr();
 

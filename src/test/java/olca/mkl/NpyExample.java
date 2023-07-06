@@ -17,17 +17,17 @@ public class NpyExample {
 
 		var m = DataDir.get()
 			.getLibraryDir()
-			.getLibrary("ecoinvent_2_2_unit")
+			.getLibrary("ei39")
 			.orElseThrow()
 			.getMatrix(LibMatrix.A)
 			.orElseThrow();
 		var csc = CSCMatrix.of(m);
 
-		System.out.println("\nMKL:");
-		testMkl(csc);
-
 		System.out.println("\nUMFPACK:");
 		testUmfpack(csc);
+
+		System.out.println("\nMKL:");
+		testMkl(csc);
 	}
 
 	private static void testUmfpack(CSCMatrix csc) {
