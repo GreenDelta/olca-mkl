@@ -1,4 +1,6 @@
-use jni_sys::{jclass, jdoubleArray, jint, jintArray, JNIEnv};
+use jni_sys::{
+  jclass, jdoubleArray, jint, jintArray, jlong, jlongArray, JNIEnv,
+};
 use std::ffi::c_char;
 use std::ptr;
 
@@ -37,6 +39,20 @@ unsafe fn get_array_i32(env: *mut JNIEnv, array: jintArray) -> *mut i32 {
 /// Give the data behind the raw pointer of the given array back to the JVM.
 unsafe fn release_array_i32(env: *mut JNIEnv, array: jintArray, ptr: *mut i32) {
   (**env).ReleaseIntArrayElements.unwrap()(env, array, ptr, 0);
+}
+
+/// Get the raw pointer of the given array from the JVM.
+unsafe fn get_array_i64(env: *mut JNIEnv, array: jlongArray) -> *mut i64 {
+  return (**env).GetLongArrayElements.unwrap()(env, array, NULL);
+}
+
+/// Give the data behind the raw pointer of the given array back to the JVM.
+unsafe fn release_array_i64(
+  env: *mut JNIEnv,
+  array: jlongArray,
+  ptr: *mut i64,
+) {
+  (**env).ReleaseLongArrayElements.unwrap()(env, array, ptr, 0);
 }
 
 #[no_mangle]
@@ -102,4 +118,64 @@ pub extern "system" fn Java_org_openlca_mkl_MKL_solveSparse(
 
     error as jint
   }
+}
+
+#[no_mangle]
+#[allow(non_snake_case)]
+pub extern "system" fn Java_org_openlca_mkl_MKL_sparseFactorization(
+  env: *mut JNIEnv,
+  _class: jclass,
+  n: jint,
+  a: jdoubleArray,
+  ia: jintArray,
+  ja: jintArray,
+  ptr: jlongArray,
+) -> jint {
+  unsafe {
+    let a_ptr = get_array_f64(env, a);
+    let ia_ptr = get_array_i32(env, ia);
+    let ja_ptr = get_array_i32(env, ja);
+    let ptr_ptr = get_array_i64(env, ptr);
+
+    let error = sparse_factorization(n, a_ptr, ia_ptr, ja_ptr, ptr_ptr);
+
+    release_array_f64(env, a, a_ptr);
+    release_array_i32(env, ia, ia_ptr);
+    release_array_i32(env, ja, ja_ptr);
+    release_array_i64(env, ptr, ptr_ptr);
+
+    error
+  }
+}
+
+#[no_mangle]
+#[allow(non_snake_case)]
+pub extern "system" fn Java_org_openlca_mkl_MKL_solveSparseFactorization(
+  env: *mut JNIEnv,
+  _class: jclass,
+  ptr: jlong,
+  b: jdoubleArray,
+  x: jdoubleArray,
+) -> jint {
+  unsafe {
+    let b_ptr = get_array_f64(env, b);
+    let x_ptr = get_array_f64(env, x);
+
+    let error = solve_sparse_factorization(ptr, b_ptr, x_ptr);
+
+    release_array_f64(env, b, b_ptr);
+    release_array_f64(env, x, x_ptr);
+
+    error as jint
+  }
+}
+
+#[no_mangle]
+#[allow(non_snake_case)]
+pub extern "system" fn Java_org_openlca_mkl_MKL_disposeSparseFactorization(
+  _env: *mut JNIEnv,
+  _class: jclass,
+  ptr: jlong,
+) {
+  dispose_sparse_factorization(ptr);
 }
