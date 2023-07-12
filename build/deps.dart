@@ -78,7 +78,8 @@ fetch() async {
     var zip = ZipDecoder().decodeBytes(bytes);
 
     for (var e in zip) {
-      if (e.name.contains("/data/Library/bin/")) {
+      if (e.name.contains("/data/Library/bin/") ||
+          e.name.contains("/data/lib/")) {
         var name = e.name.split("/").last;
         // print("copy dll: ${name}");
         File(binDir.path + "/" + name)
@@ -115,7 +116,7 @@ Future<File> _fetchLibrary(Directory dir, _Lib lib) async {
   var url = Uri.parse(lib.url());
   var req = await HttpClient().getUrl(url);
   var resp = await req.close();
-  resp.pipe(file.openWrite());
+  await resp.pipe(file.openWrite());
   return file;
 }
 
