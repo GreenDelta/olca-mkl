@@ -127,7 +127,7 @@ extern "C" {
   );
 
   pub fn pardiso(
-    pt: *mut c_void,
+    pt: *mut i64,
     maxfct: *const i32,
     mnum: *const i32,
     mtype: *const i32,
