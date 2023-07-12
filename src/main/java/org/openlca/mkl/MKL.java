@@ -17,6 +17,16 @@ public final class MKL {
 		int n, double[] a, int[] ia, int[] ja, double[] b, double[] x
 	);
 
+	public static native int sparseFactorization(
+		int n, double[] a, int[] ia, int[] ja, long[] otr
+	);
+
+	public static native int solveSparseFactorization(
+		long ptr, double[] b, double[] x
+	);
+
+	public static native void disposeSparseFactorization(long ptr);
+
 	public static boolean loadFrom(File folder) {
 		if (_loaded.get())
 			return true;
