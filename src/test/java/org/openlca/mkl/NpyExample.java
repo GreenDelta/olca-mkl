@@ -1,4 +1,4 @@
-package olca.mkl;
+package org.openlca.mkl;
 
 import org.openlca.core.DataDir;
 import org.openlca.core.library.LibMatrix;

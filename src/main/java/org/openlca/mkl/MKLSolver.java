@@ -1,6 +1,7 @@
 package org.openlca.mkl;
 
 import org.openlca.core.matrix.format.CSCMatrix;
+import org.openlca.core.matrix.format.DenseMatrix;
 import org.openlca.core.matrix.format.HashPointMatrix;
 import org.openlca.core.matrix.format.Matrix;
 import org.openlca.core.matrix.format.MatrixReader;
@@ -42,8 +43,8 @@ public class MKLSolver implements MatrixSolver {
 	@Override
 	public Factorization factorize(MatrixReader matrix) {
 		var csc = asSparse(matrix);
+		var ptr = new long[1];
 		if (csc != null) {
-			var ptr = new long[1];
 			int error = MKL.sparseFactorization(
 				csc.rows, csc.values, csc.rowIndices, csc.columnPointers, ptr);
 			// TODO: translate MKL errors to Apache Math
@@ -52,8 +53,12 @@ public class MKLSolver implements MatrixSolver {
 			return new SparseFactorization(ptr[0], csc.rows);
 		}
 
-		// TODO: implement for dense matrices
-		throw new RuntimeException("not yet implemented");
+		var dense = DenseMatrix.of(matrix);
+		int info = MKL.denseFactorization(dense.rows, dense.data, ptr);
+		// TODO: translate MKL errors to Apache Math
+		if (info != 0)
+			throw new RuntimeException("MKL error: " + info);
+		return new DenseFactorization(ptr[0], dense.rows);
 	}
 
 	@Override

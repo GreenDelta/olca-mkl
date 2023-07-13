@@ -29,7 +29,7 @@ public final class MKL {
 	);
 
 	public static native int sparseFactorization(
-		int n, double[] a, int[] ia, int[] ja, long[] otr
+		int n, double[] a, int[] ia, int[] ja, long[] ptr
 	);
 
 	public static native int solveSparseFactorization(
@@ -37,6 +37,16 @@ public final class MKL {
 	);
 
 	public static native void disposeSparseFactorization(long ptr);
+
+	public static native int denseFactorization(
+		int n, double[] a, long[] ptr
+	);
+
+	public static native int solveDenseFactorization(
+		long ptr, int nrhs, double[] b
+	);
+
+	public static native void disposeDenseFactorization(long ptr);
 
 	public static boolean loadFrom(File folder) {
 		if (_loaded.get())

@@ -1,4 +1,4 @@
-package olca.mkl;
+package org.openlca.mkl;
 
 import org.junit.Assert;
 import org.junit.Test;
