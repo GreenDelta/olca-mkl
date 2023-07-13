@@ -1,4 +1,4 @@
-use std::ffi::{c_char, c_void};
+use std::ffi::c_char;
 
 #[allow(non_snake_case)]
 #[cfg_attr(target_os = "windows", link(name = "mkl_rt.2"))]
@@ -7,10 +7,6 @@ use std::ffi::{c_char, c_void};
 extern "C" {
 
   /// [DGEMV](http://www.netlib.org/lapack/explore-html/dc/da8/dgemv_8f.html)
-  ///  performs one of the matrix-vector operations
-  /// `y := alpha*A*x + beta*y`   or   `y := alpha*A**T*x + beta*y`
-  /// where `alpha` and `beta` are scalars, `x` and `y` are vectors and `A`
-  /// is an `m` by `n` matrix.
   #[cfg_attr(target_os = "windows", link_name = "DGEMV_64")]
   #[cfg_attr(target_os = "linux", link_name = "DGEMV_64")]
   #[cfg_attr(target_os = "macos", link_name = "DGEMV_64")]
@@ -29,20 +25,9 @@ extern "C" {
   );
 
   /// [DGEMM](http://www.netlib.org/lapack/explore-html/d7/d2b/dgemm_8f.html)
-  /// performs one of the matrix-matrix operations
-  ///
-  /// `C := alpha*op( A )*op( B ) + beta*C`,
-  ///
-  /// where  `op( X )` is one of
-  ///
-  /// `op( X ) = X`   or   `op( X ) = X**T`,
-  ///
-  /// `alpha` and `beta` are scalars, and `A`, `B` and `C` are matrices,
-  /// with `op( A )` an `m` by `k` matrix,  `op( B )`  a  `k` by `n`
-  /// matrix and `C` an `m` by `n` matrix.
-  #[cfg_attr(target_os = "windows", link_name = "dgemm64_")]
-  #[cfg_attr(target_os = "linux", link_name = "dgemm_64_")]
-  #[cfg_attr(target_os = "macos", link_name = "dgemm_64_")]
+  #[cfg_attr(target_os = "windows", link_name = "DGEMM_64")]
+  #[cfg_attr(target_os = "linux", link_name = "DGEMM_64")]
+  #[cfg_attr(target_os = "macos", link_name = "DGEMM_64")]
   pub fn dgemm(
     TRANSA: *mut c_char,
     TRANSB: *mut c_char,
@@ -60,11 +45,9 @@ extern "C" {
   );
 
   /// [DGESV](http://www.netlib.org/lapack/explore-html/d8/d72/dgesv_8f.html)
-  /// computes the solution to system of linear equations `A * X = B` for
-  /// GE matrices
-  #[cfg_attr(target_os = "windows", link_name = "dgesv64_")]
-  #[cfg_attr(target_os = "linux", link_name = "dgesv_64_")]
-  #[cfg_attr(target_os = "macos", link_name = "dgesv_64_")]
+  #[cfg_attr(target_os = "windows", link_name = "DGESV_64")]
+  #[cfg_attr(target_os = "linux", link_name = "DGESV_64")]
+  #[cfg_attr(target_os = "macos", link_name = "DGESV_64")]
   pub fn dgesv(
     N: *const i64,
     NRHS: *const i64,
@@ -77,11 +60,9 @@ extern "C" {
   );
 
   /// [DGETRF](http://www.netlib.org/lapack/explore-html/d3/d6a/dgetrf_8f.html)
-  /// computes an LU factorization of a general M-by-N matrix A using partial
-  /// pivoting with row interchanges.
-  #[cfg_attr(target_os = "windows", link_name = "dgetrf64_")]
-  #[cfg_attr(target_os = "linux", link_name = "dgetrf_64_")]
-  #[cfg_attr(target_os = "macos", link_name = "dgetrf_64_")]
+  #[cfg_attr(target_os = "windows", link_name = "DGETRF_64")]
+  #[cfg_attr(target_os = "linux", link_name = "DGETRF_64")]
+  #[cfg_attr(target_os = "macos", link_name = "DGETRF_64")]
   pub fn dgetrf(
     M: *const i64,
     N: *const i64,
@@ -92,11 +73,9 @@ extern "C" {
   );
 
   /// [DGETRI](http://www.netlib.org/lapack/explore-html/df/da4/dgetri_8f.html)
-  /// DGETRI computes the inverse of a matrix using the LU factorization
-  /// computed by DGETRF.
-  #[cfg_attr(target_os = "windows", link_name = "dgetri64_")]
-  #[cfg_attr(target_os = "linux", link_name = "dgetri_64_")]
-  #[cfg_attr(target_os = "macos", link_name = "dgetri_64_")]
+  #[cfg_attr(target_os = "windows", link_name = "DGETRI_64")]
+  #[cfg_attr(target_os = "linux", link_name = "DGETRI_64")]
+  #[cfg_attr(target_os = "macos", link_name = "DGETRI_64")]
   pub fn dgetri(
     N: *mut i64,
     A: *mut f64,
@@ -108,12 +87,9 @@ extern "C" {
   );
 
   /// [DGETRS](http://www.netlib.org/lapack/explore-html/d6/d49/dgetrs_8f.html)
-  /// DGETRS solves a system of linear equations `A * X = B`  or  `A**T * X = B`
-  /// with a general N-by-N matrix A using the LU factorization computed
-  /// by DGETRF.
-  #[cfg_attr(target_os = "windows", link_name = "dgetrs64_")]
-  #[cfg_attr(target_os = "linux", link_name = "dgetrs_64_")]
-  #[cfg_attr(target_os = "macos", link_name = "dgetrs_64_")]
+  #[cfg_attr(target_os = "windows", link_name = "DGETRS_64")]
+  #[cfg_attr(target_os = "linux", link_name = "DGETRS_64")]
+  #[cfg_attr(target_os = "macos", link_name = "DGETRS_64")]
   pub fn dgetrs(
     TRANS: *const c_char,
     N: *const i64,
@@ -126,6 +102,7 @@ extern "C" {
     INFO: *mut i64,
   );
 
+  /// [PARDISO](https://www.intel.com/content/www/us/en/docs/onemkl/developer-reference-c/2023-0/pardiso.html)
   pub fn pardiso(
     pt: *mut i64,
     maxfct: *const i32,

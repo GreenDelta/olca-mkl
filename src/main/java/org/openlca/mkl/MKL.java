@@ -13,6 +13,17 @@ public final class MKL {
 		int rows, int columns, double[] matrix, double[] vector, double[] result
 	);
 
+	/**
+	 * Solves `A*x = b` where A is provided in CSC format.
+	 *
+	 * @param n The number of rows and columns of `A`.
+	 * @param a The non-zero values of `A`.
+	 * @param ia The row indices of the non-zero values of A.
+	 * @param ja The column pointers of `A`.
+	 * @param b The right-hand side vector of size `n`.
+	 * @param x The solution vector of size `n`.
+	 * @return a possible error code or 0 if no error occurred.
+	 */
 	public static native int solveSparse(
 		int n, double[] a, int[] ia, int[] ja, double[] b, double[] x
 	);
