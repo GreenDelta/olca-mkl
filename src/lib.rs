@@ -4,10 +4,12 @@ use jni_sys::{
 use std::ffi::c_char;
 
 mod arrays;
+mod dense;
 mod mkl;
 mod sparse;
 
 use crate::arrays::*;
+use crate::dense::*;
 use crate::sparse::*;
 
 #[no_mangle]
@@ -139,4 +141,50 @@ pub extern "system" fn Java_org_openlca_mkl_MKL_disposeSparseFactorization(
   ptr: jlong,
 ) {
   dispose_sparse_factorization(ptr);
+}
+
+#[no_mangle]
+#[allow(non_snake_case)]
+pub extern "system" fn Java_org_openlca_mkl_MKL_denseFactorization(
+  env: *mut JNIEnv,
+  _class: jclass,
+  n: jint,
+  a: jdoubleArray,
+  ptr: jlongArray,
+) -> jint {
+  unsafe {
+    let a_ptr = get_f64(env, a);
+    let ptr_ptr = get_i64(env, ptr);
+    let info = dense_factorization(n as i64, a_ptr, ptr_ptr);
+    drop_f64(env, a, a_ptr);
+    drop_i64(env, ptr, ptr_ptr);
+    info as jint
+  }
+}
+
+#[no_mangle]
+#[allow(non_snake_case)]
+pub extern "system" fn Java_org_openlca_mkl_MKL_solveDenseFactorization(
+  env: *mut JNIEnv,
+  _class: jclass,
+  ptr: jlong,
+  nrhs: jint,
+  b: jdoubleArray,
+) -> jint {
+  unsafe {
+    let b_ptr = get_f64(env, b);
+    let info = solve_dense_factorization(ptr, nrhs as i64, b_ptr);
+    drop_f64(env, b, b_ptr);
+    info as jint
+  }
+}
+
+#[no_mangle]
+#[allow(non_snake_case)]
+pub extern "system" fn Java_org_openlca_mkl_MKL_disposeDenseFactorization(
+  _env: *mut JNIEnv,
+  _class: jclass,
+  ptr: jlong,
+) {
+  dispose_dense_factorization(ptr);
 }
