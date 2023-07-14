@@ -87,11 +87,35 @@ pub extern "system" fn solve_dense_factorization(
 }
 
 #[no_mangle]
-pub extern "system" fn dispose_dense_factorization(
-  fact_ptr: i64) {
+pub extern "system" fn dispose_dense_factorization(fact_ptr: i64) {
   unsafe {
     let p = fact_ptr as *mut Factorization;
     let factorization = Box::from_raw(p);
     drop(factorization);
+  }
+}
+
+#[no_mangle]
+pub extern "system" fn dense_mvmult(
+  m: i64,
+  n: i64,
+  a: *const f64,
+  x: *const f64,
+  y: *mut f64,
+) {
+  unsafe {
+    dgemv(
+      &('N' as c_char), // TRANS
+      &m,               // M
+      &n,               // N
+      &1.0,             // ALPHA
+      a,                // A
+      &m,               // LDA
+      x,                // X
+      &1,               // INCX
+      &0.0,             // BETA
+      y,                // Y
+      &1,               // INCY
+    );
   }
 }

@@ -188,3 +188,25 @@ pub extern "system" fn Java_org_openlca_mkl_MKL_disposeDenseFactorization(
 ) {
   dispose_dense_factorization(ptr);
 }
+
+#[no_mangle]
+#[allow(non_snake_case)]
+pub extern "system" fn Java_org_openlca_mkl_MKL_denseMatrixVectorMul(
+  env: *mut JNIEnv,
+  _class: jclass,
+  m: jint,
+  n: jint,
+  a: jdoubleArray,
+  x: jdoubleArray,
+  y: jdoubleArray,
+) {
+  unsafe {
+    let a_ptr = get_f64(env, a);
+    let x_ptr = get_f64(env, x);
+    let y_ptr = get_f64(env, y);
+    dense_mvmult(m as i64, n as i64, a_ptr, x_ptr, y_ptr);
+    drop_f64(env, a, a_ptr);
+    drop_f64(env, x, x_ptr);
+    drop_f64(env, y, y_ptr);
+  }
+}

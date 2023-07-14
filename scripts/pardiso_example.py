@@ -1,3 +1,5 @@
+# see also https://github.com/haasad/PyPardisoProject
+
 import ctypes
 import numpy as np
 
