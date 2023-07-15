@@ -1,12 +1,25 @@
 package org.openlca.mkl;
 
+import org.openlca.core.DataDir;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class MKL {
 
+	/**
+	 * The version of this JNI interface. This version and the version
+	 * returned by the native library have to match exactly.
+	 */
+	public static final int VERSION = 1;
+
 	private static final AtomicBoolean _loaded = new AtomicBoolean(false);
 
+	/**
+	 * The JNI version returned from the native library.
+	 */
 	public static native int version();
 
 	/**
@@ -39,12 +52,12 @@ public final class MKL {
 	/**
 	 * Solves x in {@code A * x = b} where A is provided in CSC format.
 	 *
-	 * @param n the number of rows and columns of A.
-	 * @param a the non-zero values of A.
+	 * @param n  the number of rows and columns of A.
+	 * @param a  the non-zero values of A.
 	 * @param ia the row indices of the non-zero values of A.
 	 * @param ja the column pointers of A.
-	 * @param b the right-hand side vector of size n.
-	 * @param x the solution vector of size n.
+	 * @param b  the right-hand side vector of size n.
+	 * @param x  the solution vector of size n.
 	 * @return a possible error code or 0 if no error occurred.
 	 */
 	public static native int solveSparse(
@@ -76,10 +89,10 @@ public final class MKL {
 	 * the parameter A: on exit it will contain the LU-factorization
 	 * of the matrix A.
 	 *
-	 * @param n the number of rows and columns of A.
+	 * @param n    the number of rows and columns of A.
 	 * @param nrhs the number of columns of x and b.
-	 * @param a on entry, the matrix A, on exit the factorization of A.
-	 * @param b on entry, the right-hand side, on exit the solution x.
+	 * @param a    on entry, the matrix A, on exit the factorization of A.
+	 * @param b    on entry, the right-hand side, on exit the solution x.
 	 */
 	public static native int solveDense(
 		int n, int nrhs, double[] a, double[] b
@@ -94,28 +107,93 @@ public final class MKL {
 	 */
 	public static native int invertDense(int n, double[] a);
 
-	public static boolean loadFrom(File folder) {
+	public static boolean isLoaded() {
+		return _loaded.get();
+	}
+
+	/**
+	 * Tries to load the native libraries from the default
+	 * openLCA workspace location.
+	 */
+	public static boolean loadFromDefault() {
+		return loadFrom(DataDir.get().root());
+	}
+
+	/**
+	 * Tries to load the libraries from the olca-mkl specific
+	 * sub-folder of the given directory. The name of the
+	 * sub-folder has the following pattern:
+	 * {@code olca-mkl-[arch]_v[version]}.
+	 */
+	public static boolean loadFrom(File root) {
 		if (_loaded.get())
 			return true;
-		if (folder == null || !folder.exists())
+		if (root == null || !root.exists())
 			return false;
+
+		var dirName = "olca-mkl-" + arch() + "_v" + VERSION;
+		var libDir = new File(root, dirName);
+		if (!libDir.exists())
+			return false;
+
 		synchronized (_loaded) {
 			if (_loaded.get())
 				return true;
-
-			var os = OS.detect();
-			if (!os.loadLibrariesFrom(folder))
-				return false;
+			var log = LoggerFactory.getLogger(MKL.class);
+			log.debug("try to load MKL libraries from {}", libDir);
 			try {
-				int v = MKL.version();
-				if (v > 0) {
-					_loaded.set(true);
-					return true;
+
+				// load the DLLs
+				var libs = OS.detect().libraries();
+				for (var lib : libs) {
+					var dll = new File(libDir, lib);
+					if (!tryLoad(dll, log))
+						return false;
 				}
+
+				// check that the version matches
+				int v = MKL.version();
+				if (v != VERSION) {
+					log.warn(
+						"loaded MKL libraries from {} but versions " +
+							"do not match: Java = {}, native = {}",
+						libDir, VERSION, v);
+					return false;
+				}
+
+				_loaded.set(true);
+				log.info("loaded MKL libraries v{} from {}", v, libDir);
+				return true;
 			} catch (Throwable e) {
-				e.printStackTrace(); // TODO: logging!
+				log.error("failed to load MKL libraries from " + libDir, e);
+				_loaded.set(false);
+				return false;
 			}
+		}
+	}
+
+	private static boolean tryLoad(File dll, Logger log) {
+		if (!dll.exists()) {
+			log.warn("DLL {} missing; could not load MKL libraries", dll);
 			return false;
 		}
+		try {
+			System.load(dll.getAbsolutePath());
+			log.info("loaded MKL DLL {}", dll);
+			return true;
+		} catch (Throwable e) {
+			log.error("failed to load MKL DLL "+ dll, e);
+			return false;
+		}
+	}
+
+	private static String arch() {
+		var arch = System.getProperty("os.arch");
+		if (arch == null)
+			return "x64";
+		var lower = arch.trim().toLowerCase();
+		return lower.startsWith("aarch") || lower.startsWith("arm")
+			? "arm64"
+			: "x64";
 	}
 }

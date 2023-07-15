@@ -1,6 +1,5 @@
 package org.openlca.mkl;
 
-import java.io.File;
 import java.util.Locale;
 
 enum OS {
@@ -10,12 +9,12 @@ enum OS {
 		"libolcamkl.so"
 	}),
 
-	MacOS(new String[] {
+	MacOS(new String[]{
 		"libmkl_rt.dylib",
 		"libolcamkl.dylib"
 	}),
 
-	Windows(new String[] {
+	Windows(new String[]{
 		"mkl_rt.2.dll",
 		"olcamkl.dll",
 	});
@@ -36,22 +35,7 @@ enum OS {
 		return OS.Linux;
 	}
 
-	boolean loadLibrariesFrom(File dir) {
-		// TODO: logging
-		if (dir == null || !dir.exists()) {
-			return false;
-		}
-		for (var lib : libraries) {
-			var libFile = new File(dir, lib);
-			if (!libFile.exists()) {
-				return false;
-			}
-			try {
-				System.load(libFile.getAbsolutePath());
-			} catch (Throwable e) {
-				return false;
-			}
-		}
-		return true;
+	String[] libraries() {
+		return libraries;
 	}
 }
