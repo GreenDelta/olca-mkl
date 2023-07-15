@@ -27,10 +27,8 @@ class DenseFactorization implements Factorization {
 		if (b == null)
 			return new double[size];
 		var x = Arrays.copyOf(b, b.length);
-		int error = MKL.solveDenseFactorization(pointer, 1, x);
-		// TODO: translate MKL errors to Apache Math
-		if (error != 0)
-			throw new RuntimeException("MKL-Error: " + error);
+		int info = MKL.solveDenseFactorization(pointer, 1, x);
+		InfoCode.checkBlas(info);
 		return x;
 	}
 

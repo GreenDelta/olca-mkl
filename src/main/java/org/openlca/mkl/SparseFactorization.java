@@ -26,10 +26,8 @@ class SparseFactorization implements Factorization  {
 		double[] x = new double[size];
 		if (b == null)
 			return x;
-		int error = MKL.solveSparseFactorization(pointer, b, x);
-		// TODO: translate MKL errors to Apache Math
-		if (error != 0)
-			throw new RuntimeException("MKL-Error: " + error);
+		int info = MKL.solveSparseFactorization(pointer, b, x);
+		InfoCode.checkPardiso(info);
 		return x;
 	}
 

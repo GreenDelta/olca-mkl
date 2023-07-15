@@ -73,8 +73,8 @@ public final class MKL {
 
 	/**
 	 * Solves x in {@code A * x = b}. Note that this method mutates
-	 * the parameter A: on exit, it will contain the LU-factorization
-	 * of the matrix.
+	 * the parameter A: on exit it will contain the LU-factorization
+	 * of the matrix A.
 	 *
 	 * @param n the number of rows and columns of A.
 	 * @param nrhs the number of columns of x and b.
@@ -90,7 +90,7 @@ public final class MKL {
 	 *
 	 * @param n the number of rows and columns of A.
 	 * @param a on entry the matrix A, on exit the inverse of A.
-	 * @returns 0 on success or an error code otherwise.
+	 * @return 0 on success or an error code otherwise.
 	 */
 	public static native int invertDense(int n, double[] a);
 
