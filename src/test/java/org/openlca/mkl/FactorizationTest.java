@@ -13,7 +13,7 @@ public class FactorizationTest {
 
 	@BeforeClass
 	public static void setup() {
-		MKL.loadFrom(new File("bin")); // TODO
+		MKL.loadFromDefault();
 	}
 
 	@Test
