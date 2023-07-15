@@ -14,11 +14,13 @@ public class Main {
 		}
 		System.out.println(MKL.version());
 		var y = new double[]{0, 0, 0};
-		MKL.denseMatrixVectorMultiplication(
-			3, 3,
+		MKL.denseMatrixVectorMul(
+			3,
+			3,
 			new double[]{1, 2, 3, 4, 5, 6, 7, 8, 9},
 			new double[]{1, 2, 3},
-			y);
+			y
+		);
 		for (double yi : y) {
 			System.out.println(yi);
 		}

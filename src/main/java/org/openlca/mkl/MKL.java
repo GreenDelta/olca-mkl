@@ -9,19 +9,42 @@ public final class MKL {
 
 	public static native int version();
 
-	public static native void denseMatrixVectorMultiplication(
-		int rows, int columns, double[] matrix, double[] vector, double[] result
+	/**
+	 * Calculates {@code y := A * x}.
+	 *
+	 * @param m the number of rows of matrix A.
+	 * @param n the number of columns of matrix A.
+	 * @param a the matrix A in column-major order.
+	 * @param x the vector x of size n.
+	 * @param y the vector y of size m.
+	 */
+	public static native void denseMatrixVectorMul(
+		int m, int n, double[] a, double[] x, double[] y
 	);
 
 	/**
-	 * Solves `A*x = b` where A is provided in CSC format.
+	 * Calculates {@code C := A * B}.
 	 *
-	 * @param n The number of rows and columns of `A`.
-	 * @param a The non-zero values of `A`.
-	 * @param ia The row indices of the non-zero values of A.
-	 * @param ja The column pointers of `A`.
-	 * @param b The right-hand side vector of size `n`.
-	 * @param x The solution vector of size `n`.
+	 * @param m the number of rows of matrix A.
+	 * @param n the number of columns of matrix B.
+	 * @param k the number of rows (columns) of matrix A (B).
+	 * @param a the matrix A.
+	 * @param b the matrix B.
+	 * @param c the matrix C.
+	 */
+	public static native void denseMatrixMul(
+		int m, int n, int k, double[] a, double[] b, double[] c
+	);
+
+	/**
+	 * Solves x in {@code A * x = b} where A is provided in CSC format.
+	 *
+	 * @param n the number of rows and columns of A.
+	 * @param a the non-zero values of A.
+	 * @param ia the row indices of the non-zero values of A.
+	 * @param ja the column pointers of A.
+	 * @param b the right-hand side vector of size n.
+	 * @param x the solution vector of size n.
 	 * @return a possible error code or 0 if no error occurred.
 	 */
 	public static native int solveSparse(
@@ -47,6 +70,29 @@ public final class MKL {
 	);
 
 	public static native void disposeDenseFactorization(long ptr);
+
+	/**
+	 * Solves x in {@code A * x = b}. Note that this method mutates
+	 * the parameter A: on exit, it will contain the LU-factorization
+	 * of the matrix.
+	 *
+	 * @param n the number of rows and columns of A.
+	 * @param nrhs the number of columns of x and b.
+	 * @param a on entry, the matrix A, on exit the factorization of A.
+	 * @param b on entry, the right-hand side, on exit the solution x.
+	 */
+	public static native int solveDense(
+		int n, int nrhs, double[] a, double[] b
+	);
+
+	/**
+	 * Inverts a matrix A in place.
+	 *
+	 * @param n the number of rows and columns of A.
+	 * @param a on entry the matrix A, on exit the inverse of A.
+	 * @returns 0 on success or an error code otherwise.
+	 */
+	public static native int invertDense(int n, double[] a);
 
 	public static boolean loadFrom(File folder) {
 		if (_loaded.get())

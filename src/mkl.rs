@@ -29,19 +29,19 @@ extern "C" {
   #[cfg_attr(target_os = "linux", link_name = "DGEMM_64")]
   #[cfg_attr(target_os = "macos", link_name = "DGEMM_64")]
   pub fn dgemm(
-    TRANSA: *mut c_char,
-    TRANSB: *mut c_char,
-    M: *mut i64,
-    N: *mut i64,
-    K: *mut i64,
-    ALPHA: *mut f64,
-    A: *mut f64,
-    LDA: *mut i64,
-    B: *mut f64,
-    LDB: *mut i64,
-    BETA: *mut f64,
+    TRANSA: *const c_char,
+    TRANSB: *const c_char,
+    M: *const i64,
+    N: *const i64,
+    K: *const i64,
+    ALPHA: *const f64,
+    A: *const f64,
+    LDA: *const i64,
+    B: *const f64,
+    LDB: *const i64,
+    BETA: *const f64,
     C: *mut f64,
-    LDC: *mut i64,
+    LDC: *const i64,
   );
 
   /// [DGESV](http://www.netlib.org/lapack/explore-html/d8/d72/dgesv_8f.html)
@@ -77,12 +77,12 @@ extern "C" {
   #[cfg_attr(target_os = "linux", link_name = "DGETRI_64")]
   #[cfg_attr(target_os = "macos", link_name = "DGETRI_64")]
   pub fn dgetri(
-    N: *mut i64,
+    N: *const i64,
     A: *mut f64,
-    LDA: *mut i64,
-    IPIV: *mut i64,
+    LDA: *const i64,
+    IPIV: *const i64,
     WORK: *mut f64,
-    LWORK: *mut i64,
+    LWORK: *const i64,
     INFO: *mut i64,
   );
 

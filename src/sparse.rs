@@ -164,6 +164,7 @@ impl Drop for Solver {
   }
 }
 
+#[inline]
 #[no_mangle]
 pub extern "system" fn sparse_factorization(
   n: i32,
@@ -185,6 +186,7 @@ pub extern "system" fn sparse_factorization(
   0
 }
 
+#[inline]
 #[no_mangle]
 pub extern "system" fn solve_sparse_factorization(
   solver_ptr: i64,
@@ -197,6 +199,7 @@ pub extern "system" fn solve_sparse_factorization(
   }
 }
 
+#[inline]
 #[no_mangle]
 pub extern "system" fn dispose_sparse_factorization(solver_ptr: i64) {
   unsafe {
@@ -206,6 +209,7 @@ pub extern "system" fn dispose_sparse_factorization(solver_ptr: i64) {
   }
 }
 
+#[inline]
 #[no_mangle]
 pub extern "system" fn solve_sparse(
   n: i32,

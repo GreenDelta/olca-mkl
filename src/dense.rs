@@ -21,7 +21,14 @@ impl Factorization {
 
     unsafe {
       ptr::copy_nonoverlapping(matrix, data_ptr, size);
-      dgetrf(&n, &n, data_ptr, &n, pivot.as_mut_ptr(), &mut info);
+      dgetrf(
+        &n,                 // M
+        &n,                 // N
+        data_ptr,           // A
+        &n,                 // LDA
+        pivot.as_mut_ptr(), // IPIV
+        &mut info,          // INFO
+      );
     }
 
     if info == 0 {
@@ -36,15 +43,15 @@ impl Factorization {
     let mut info = 0i64;
     unsafe {
       dgetrs(
-        &('N' as c_char),
-        &self.n,
-        &nrhs,
-        self.data.as_ptr(),
-        &self.n,
-        self.pivot.as_ptr(),
-        b,
-        &self.n,
-        &mut info,
+        &('N' as c_char),    // TRANS
+        &self.n,             // N
+        &nrhs,               // NRHS
+        self.data.as_ptr(),  // A
+        &self.n,             // LDA
+        self.pivot.as_ptr(), // IPIV
+        b,                   // B
+        &self.n,             // LDB
+        &mut info,           // INFO
       )
     }
     info
@@ -57,6 +64,7 @@ impl Drop for Factorization {
   }
 }
 
+#[inline]
 #[no_mangle]
 pub extern "system" fn dense_factorization(
   n: i64,
@@ -74,6 +82,7 @@ pub extern "system" fn dense_factorization(
   info
 }
 
+#[inline]
 #[no_mangle]
 pub extern "system" fn solve_dense_factorization(
   fact_ptr: i64,
@@ -86,6 +95,7 @@ pub extern "system" fn solve_dense_factorization(
   }
 }
 
+#[inline]
 #[no_mangle]
 pub extern "system" fn dispose_dense_factorization(fact_ptr: i64) {
   unsafe {
@@ -95,8 +105,9 @@ pub extern "system" fn dispose_dense_factorization(fact_ptr: i64) {
   }
 }
 
+#[inline]
 #[no_mangle]
-pub extern "system" fn dense_mvmult(
+pub extern "system" fn dense_mvmul(
   m: i64,
   n: i64,
   a: *const f64,
@@ -118,4 +129,99 @@ pub extern "system" fn dense_mvmult(
       &1,               // INCY
     );
   }
+}
+
+#[inline]
+#[no_mangle]
+pub extern "system" fn dense_mmul(
+  m: i64,
+  n: i64,
+  k: i64,
+  a: *const f64,
+  b: *const f64,
+  c: *mut f64,
+) {
+  let trans = 'N' as c_char;
+  unsafe {
+    dgemm(
+      &trans, // TRANSA
+      &trans, // TRANSB
+      &m,     // M
+      &n,     // N
+      &k,     // K
+      &1f64,  // ALPHA
+      a,      // A
+      &m,     // LDA
+      b,      // B
+      &k,     // LDB
+      &0f64,  // BETA
+      c,      // C
+      &m,     // LDC
+    )
+  }
+}
+
+#[inline]
+#[no_mangle]
+pub extern "system" fn solve_dense(
+  n: i64,
+  nrhs: i64,
+  a: *mut f64,
+  b: *mut f64,
+) -> i64 {
+  let mut info = 0i64;
+  let mut ipiv = vec![0i64; n as usize];
+  unsafe {
+    dgesv(
+      &n,                // N
+      &nrhs,             // NRHS
+      a,                 // A
+      &n,                // LDA
+      ipiv.as_mut_ptr(), // IPIV
+      b,                 // B
+      &n,                // LDB
+      &mut info,         // INFO
+    );
+  }
+  info
+}
+
+#[inline]
+#[no_mangle]
+pub extern "system" fn invert_dense(n: i64, a: *mut f64) -> i64 {
+  // factorization
+  let mut pivot = vec![0i64; n as usize];
+  let ipiv = pivot.as_mut_ptr();
+  let mut info = 0i64;
+  unsafe {
+    dgetrf(
+      &n,        // M
+      &n,        // N
+      a,         // A
+      &n,        // LDA
+      ipiv,      // IPIV
+      &mut info, // INFO
+    );
+  }
+  if info != 0 {
+    return info;
+  }
+
+  let lwork = 64 * 2 * n;
+  let mut work = vec![0f64; lwork as usize];
+  let work_ptr = work.as_mut_ptr();
+
+  // inversion
+  unsafe {
+    dgetri(
+      &n,        // N
+      a,         // A
+      &n,        // LDA
+      ipiv,      // IPIV
+      work_ptr,  // WORK
+      &lwork,    // LWORK
+      &mut info, // INFO
+    );
+  }
+  info
 }
