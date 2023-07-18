@@ -6,7 +6,13 @@ This is an experimental project that links the Intel Math Kernel (MKL) as calcul
 
 ## Building
 
-The build scripts are written in Dart so that you need to have a current version of Dart (3.x) installed.
+The build scripts are written in Dart so that you need to have a current version of Dart (3.x) installed as well as the `archive`
+library. To install the library, run:
+```bash
+dart pub add archive
+```
+
+On MacOS 
 
 ```bash
 cd olca-mkl
