@@ -17,6 +17,13 @@ pub extern "system" fn Java_org_openlca_mkl_MKL_version() -> jint {
   1
 }
 
+// A workaround for non-Intel CPUs, do not know if this works.
+// See https://danieldk.eu/mkl-amd-zen/.
+#[no_mangle]
+pub extern "system" fn mkl_serv_intel_cpu_true() -> i32 {
+  1
+}
+
 #[no_mangle]
 #[allow(non_snake_case)]
 pub extern "system" fn Java_org_openlca_mkl_MKL_solveSparse(

@@ -112,6 +112,33 @@ public final class MKL {
 	}
 
 	/**
+	 * Returns {@code true} if the default openLCA workspace is
+	 * a directory with MKL library folder.
+	 */
+	public static boolean isDefaultLibraryDir() {
+		return isLibraryDir(DataDir.get().root());
+	}
+
+	/**
+	 * Returns {@code true} if the given directory contains the
+	 * MKL library folder for the current platform.
+	 */
+	public static boolean isLibraryDir(File root) {
+		if (root == null || !root.isDirectory())
+			return false;
+		var dirName = "olca-mkl-" + arch() + "_v" + VERSION;
+		var libDir = new File(root, dirName);
+		if (!libDir.isDirectory())
+			return false;
+		for (var lib : OS.detect().libraries()) {
+			var dll = new File(libDir, lib);
+			if (!dll.exists())
+				return false;
+		}
+		return true;
+	}
+
+	/**
 	 * Tries to load the native libraries from the default
 	 * openLCA workspace location.
 	 */
@@ -133,7 +160,7 @@ public final class MKL {
 
 		var dirName = "olca-mkl-" + arch() + "_v" + VERSION;
 		var libDir = new File(root, dirName);
-		if (!libDir.exists())
+		if (!libDir.isDirectory())
 			return false;
 
 		synchronized (_loaded) {
@@ -182,7 +209,7 @@ public final class MKL {
 			log.info("loaded MKL DLL {}", dll);
 			return true;
 		} catch (Throwable e) {
-			log.error("failed to load MKL DLL "+ dll, e);
+			log.error("failed to load MKL DLL " + dll, e);
 			return false;
 		}
 	}
