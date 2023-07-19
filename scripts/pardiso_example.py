@@ -2,8 +2,17 @@
 
 import ctypes
 import numpy as np
+from sys import platform
 
-lib = ctypes.CDLL("./bin/mkl_rt.2.dll")
+if platform == "darwin":
+    lib = ctypes.CDLL("./bin/libmkl_rt.2.dylib")
+elif platform == "win32":
+    lib = ctypes.CDLL("./bin/mkl_rt.2.dll")
+elif platform == "linux" or platform == "linux2":
+    lib = ctypes.CDLL("./bin/mkl_rt.2.so")
+else:
+    raise Exception("Could not detect the OS.")
+
 # lib = ctypes.CDLL("./bin/libmkl_rt.so.2")
 pardiso = lib.pardiso
 pardiso.argtypes = [

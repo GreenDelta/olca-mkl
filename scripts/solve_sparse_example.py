@@ -1,9 +1,18 @@
 import ctypes
 import numpy as np
+
 from scipy.sparse import csc_matrix
+from sys import platform
 
+if platform == "darwin":
+    lib = ctypes.CDLL("./bin/libolcamkl.dylib")
+elif platform == "win32":
+    lib = ctypes.CDLL("./bin/olcamkl.dll")
+elif platform == "linux" or platform == "linux2":
+    lib = ctypes.CDLL("./bin/olcamkl.so")
+else:
+    raise Exception("Could not detect the OS.")
 
-lib = ctypes.CDLL("./bin/olcamkl.dll")
 solve = lib.solve_sparse
 float_ptr = ctypes.POINTER(ctypes.c_double)
 int_ptr = ctypes.POINTER(ctypes.c_int32)

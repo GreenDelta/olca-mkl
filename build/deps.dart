@@ -92,7 +92,7 @@ fetch() async {
           e.name.contains("third-party-programs.txt")) {
         var name = lib.name + "_" + e.name.split("/").last;
         var licenseFile = File(workDir.path + "/" + name);
-        print("consinder the license(s) in ${licenseFile.path}");
+        print("consider the license(s) in ${licenseFile.path}");
         if (!licenseFile.existsSync()) {
           licenseFile
             ..createSync()
