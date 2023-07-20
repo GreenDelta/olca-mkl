@@ -13,7 +13,8 @@ use crate::sparse::*;
 
 #[no_mangle]
 #[allow(non_snake_case)]
-pub extern "system" fn Java_org_openlca_mkl_MKL_version() -> jint {
+pub extern "system" fn Java_org_openlca_core_matrix_solvers_mkl_MKL_version(
+) -> jint {
   1
 }
 
@@ -26,7 +27,7 @@ pub extern "system" fn mkl_serv_intel_cpu_true() -> i32 {
 
 #[no_mangle]
 #[allow(non_snake_case)]
-pub extern "system" fn Java_org_openlca_mkl_MKL_solveSparse(
+pub extern "system" fn Java_org_openlca_core_matrix_solvers_mkl_MKL_solveSparse(
   env: *mut JNIEnv,
   _class: jclass,
   n: jint,
@@ -57,7 +58,7 @@ pub extern "system" fn Java_org_openlca_mkl_MKL_solveSparse(
 
 #[no_mangle]
 #[allow(non_snake_case)]
-pub extern "system" fn Java_org_openlca_mkl_MKL_sparseFactorization(
+pub extern "system" fn Java_org_openlca_core_matrix_solvers_mkl_MKL_sparseFactorization(
   env: *mut JNIEnv,
   _class: jclass,
   n: jint,
@@ -85,7 +86,7 @@ pub extern "system" fn Java_org_openlca_mkl_MKL_sparseFactorization(
 
 #[no_mangle]
 #[allow(non_snake_case)]
-pub extern "system" fn Java_org_openlca_mkl_MKL_solveSparseFactorization(
+pub extern "system" fn Java_org_openlca_core_matrix_solvers_mkl_MKL_solveSparseFactorization(
   env: *mut JNIEnv,
   _class: jclass,
   ptr: jlong,
@@ -107,7 +108,7 @@ pub extern "system" fn Java_org_openlca_mkl_MKL_solveSparseFactorization(
 
 #[no_mangle]
 #[allow(non_snake_case)]
-pub extern "system" fn Java_org_openlca_mkl_MKL_disposeSparseFactorization(
+pub extern "system" fn Java_org_openlca_core_matrix_solvers_mkl_MKL_disposeSparseFactorization(
   _env: *mut JNIEnv,
   _class: jclass,
   ptr: jlong,
@@ -117,7 +118,7 @@ pub extern "system" fn Java_org_openlca_mkl_MKL_disposeSparseFactorization(
 
 #[no_mangle]
 #[allow(non_snake_case)]
-pub extern "system" fn Java_org_openlca_mkl_MKL_denseFactorization(
+pub extern "system" fn Java_org_openlca_core_matrix_solvers_mkl_MKL_denseFactorization(
   env: *mut JNIEnv,
   _class: jclass,
   n: jint,
@@ -136,7 +137,7 @@ pub extern "system" fn Java_org_openlca_mkl_MKL_denseFactorization(
 
 #[no_mangle]
 #[allow(non_snake_case)]
-pub extern "system" fn Java_org_openlca_mkl_MKL_solveDenseFactorization(
+pub extern "system" fn Java_org_openlca_core_matrix_solvers_mkl_MKL_solveDenseFactorization(
   env: *mut JNIEnv,
   _class: jclass,
   ptr: jlong,
@@ -153,7 +154,7 @@ pub extern "system" fn Java_org_openlca_mkl_MKL_solveDenseFactorization(
 
 #[no_mangle]
 #[allow(non_snake_case)]
-pub extern "system" fn Java_org_openlca_mkl_MKL_disposeDenseFactorization(
+pub extern "system" fn Java_org_openlca_core_matrix_solvers_mkl_MKL_disposeDenseFactorization(
   _env: *mut JNIEnv,
   _class: jclass,
   ptr: jlong,
@@ -163,7 +164,7 @@ pub extern "system" fn Java_org_openlca_mkl_MKL_disposeDenseFactorization(
 
 #[no_mangle]
 #[allow(non_snake_case)]
-pub extern "system" fn Java_org_openlca_mkl_MKL_denseMatrixVectorMul(
+pub extern "system" fn Java_org_openlca_core_matrix_solvers_mkl_MKL_denseMatrixVectorMul(
   env: *mut JNIEnv,
   _class: jclass,
   m: jint,
@@ -185,7 +186,7 @@ pub extern "system" fn Java_org_openlca_mkl_MKL_denseMatrixVectorMul(
 
 #[no_mangle]
 #[allow(non_snake_case)]
-pub extern "system" fn Java_org_openlca_mkl_MKL_denseMatrixMul(
+pub extern "system" fn Java_org_openlca_core_matrix_solvers_mkl_MKL_denseMatrixMul(
   env: *mut JNIEnv,
   _class: jclass,
   m: jint,
@@ -208,7 +209,7 @@ pub extern "system" fn Java_org_openlca_mkl_MKL_denseMatrixMul(
 
 #[no_mangle]
 #[allow(non_snake_case)]
-pub extern "system" fn Java_org_openlca_mkl_MKL_solveDense(
+pub extern "system" fn Java_org_openlca_core_matrix_solvers_mkl_MKL_solveDense(
   env: *mut JNIEnv,
   _class: jclass,
   n: jint,
@@ -228,7 +229,7 @@ pub extern "system" fn Java_org_openlca_mkl_MKL_solveDense(
 
 #[no_mangle]
 #[allow(non_snake_case)]
-pub extern "system" fn Java_org_openlca_mkl_MKL_invertDense(
+pub extern "system" fn Java_org_openlca_core_matrix_solvers_mkl_MKL_invertDense(
   env: *mut JNIEnv,
   _class: jclass,
   n: jint,

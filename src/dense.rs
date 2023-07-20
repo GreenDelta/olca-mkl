@@ -11,8 +11,6 @@ struct Factorization {
 
 impl Factorization {
   fn of(n: i64, matrix: *const f64) -> (Option<Factorization>, i64) {
-    println!("debug: create dense factorization");
-
     let size = (n * n) as usize;
     let mut data = vec![0f64; size];
     let data_ptr = data.as_mut_ptr();
@@ -39,7 +37,6 @@ impl Factorization {
   }
 
   fn solve(&self, nrhs: i64, b: *mut f64) -> i64 {
-    println!("debug: solve dense factorization");
     let mut info = 0i64;
     unsafe {
       dgetrs(
@@ -55,12 +52,6 @@ impl Factorization {
       )
     }
     info
-  }
-}
-
-impl Drop for Factorization {
-  fn drop(&mut self) {
-    println!("debug: dispose dense factorization");
   }
 }
 

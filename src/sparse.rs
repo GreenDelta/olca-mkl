@@ -27,7 +27,6 @@ struct Solver {
 
 impl Solver {
   fn new(n: i32) -> Self {
-    println!("debug: create solver");
     let pt = vec![0i64; 64];
     let perm = vec![0i32; n as usize];
     let mut iparm = vec![0i32; 64];
@@ -49,7 +48,6 @@ impl Solver {
     b: *mut f64,
     x: *mut f64,
   ) -> i32 {
-    println!("debug: solve Ax=b for x");
     let mut error = 0;
     unsafe {
       pardiso(
@@ -80,7 +78,6 @@ impl Solver {
     ia: *const i32,
     ja: *const i32,
   ) -> i32 {
-    println!("debug: factorize matrix");
     let mut error = 0;
     unsafe {
       pardiso(
@@ -106,7 +103,6 @@ impl Solver {
   }
 
   fn solve_with_factorization(&mut self, b: *mut f64, x: *mut f64) -> i32 {
-    println!("debug: solve with factorization");
     let mut error = 0;
     unsafe {
       pardiso(
@@ -134,7 +130,6 @@ impl Solver {
 
 impl Drop for Solver {
   fn drop(&mut self) {
-    println!("debug: drop solver");
     unsafe {
       let mut error = 0i32;
 
