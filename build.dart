@@ -8,6 +8,21 @@ main() async {
   if (Platform.isWindows) {
     winlib.generateLibFile();
   }
+  if (Platform.isLinux) {
+    var binDir = Directory("./bin");
+    if (Platform.isLinux) {
+      var lnFile = File(binDir.path + "/libmkl_rt.so.2");
+      var lnLink = File(binDir.path + "/libmkl_rt.so");
+      if (lnFile.existsSync() && !lnLink.existsSync()) {
+        print("create symlink libmkl_rt.so");
+        var r = Process.runSync("ln", ["-s", "libmkl_rt.so.2", "libmkl_rt.so"],
+            workingDirectory: binDir.path);
+        if (r.exitCode != 0) {
+          print("  failed: ${r.stderr}");
+        }
+      }
+    }
+  }
 
   print("compile library ...");
   var flags = Platform.isWindows
